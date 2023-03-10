@@ -14,11 +14,6 @@ jobs:
   Ci-tosasitillKernelAutoBuild:
     runs-on: ubuntu-20.04
     steps:
-      - name: 获取源代码
-        uses: actions/checkout@ONLINE
-        with: 
-          path: android_kernel_xiaomi_sdm845_LineageOS
-      
       - name: 安装依赖
         run: |
           sudo apt update -y
@@ -50,7 +45,7 @@ jobs:
       - name: 编译 Kernel
         run: |
           cd
-          cd ndroid_kernel_xiaomi_sdm845_LineageOS
+          cd android_kernel_xiaomi_sdm845_LineageOS
           bash ./build_online.sh
           
       - name: 获取系统信息并保存到文件
@@ -77,9 +72,7 @@ jobs:
           echo "操作系统信息：" >> INFO.txt
           lsb_release -a >> INFO.txt
         shell: bash
-
-
-          
+        
       - name: 创建 INFO 文件
         run: |
           echo "内核编译设备: Xiaomi MIX 2S
