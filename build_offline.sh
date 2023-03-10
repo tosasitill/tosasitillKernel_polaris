@@ -10,6 +10,8 @@ export CROSS_COMPILE=aarch64-linux-android-
 export CROSS_COMPILE_ARM32=arm-linux-androideabi-
 output_dir=out
 
+
+
 start_time=$(date +%s) # 记录开始时间
 
 cd ~/tosasitillKernel_polaris
@@ -22,7 +24,6 @@ make -j$(nproc) \
     O="$output_dir" \
     CC=clang
 
-cd -
 
 cp -v ~/tosasitillKernel_polaris/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
 
