@@ -12,7 +12,7 @@ output_dir=out
 
 start_time=$(date +%s) # 记录开始时间
 
-cd ~/android_kernel_xiaomi_sdm845_LineageOS
+cd ~/tosasitillKernel_polaris
 
 make O="$output_dir" \
     vendor/xiaomi/mi845_defconfig \
@@ -24,7 +24,7 @@ make -j$(nproc) \
 
 cd -
 
-cp -v ~/android_kernel_xiaomi_sdm845_LineageOS/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
+cp -v ~/tosasitillKernel_polaris/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
 
 end_time=$(date +%s) # 记录结束时间
 total_time=$((end_time - start_time)) # 计算总计编译时间
@@ -40,11 +40,11 @@ cd ~/AnyKernel3
 
 7z a -mx9 ../tosasitillKernel-Ci-V$name.zip *
 
-cp tosasitillKernel-Ci-V$name.zip ~/Desktop
+
 
 echo "本次编译已完成,共耗时:$((total_time / 60)) 分钟 $((total_time % 60)) 秒,Anykernel文件已拷贝至桌面."
 
-cd ~/android_kernel_xiaomi_sdm845_LineageOS
+cd ~/tosasitillKernel_polaris
 
 echo "开始清理文件"
 
