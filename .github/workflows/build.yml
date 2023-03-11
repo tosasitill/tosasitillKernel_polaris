@@ -8,71 +8,17 @@ on:
       KERNEL_VER:
         description: 'Kernel Version/内核版本(仅数字)'
         required: true
-        default: '1.4-ksu'
+        default: '1.6-ksu'
 
 jobs:
   Ci-tosasitillKernelAutoBuild:
     runs-on: ubuntu-20.04
     steps:
-      - name: 安装依赖
+      - name: Building
         run: |
-          sudo apt update -y
-          sudo apt-get install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev libelf-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev
-          sudo apt clean
+          wget https://github.com/tosasitill/tosasitillKernel_polaris/blob/ONLINE/setup.sh
+          sudo bash ~/setup.sh
           
-      - name: 获取源代码和交叉编译器
-        run: |
-          git clone https://github.com/tosasitill/tosasitillKernel_polaris --depth=1 -b ONLINE android_kernel_xiaomi_sdm845_LineageOS
-          git clone https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r445002 --depth=1 --single-branch --no-tags -b 12.0 ~/clang
-          git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/aarch64-linux-android-4.9
-          git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-10.0.0_r47 --depth=1 --single-branch --no-tags ~/arm-linux-androideabi-4.9
-          git clone https://github.com/tosasitill/AnyKernel3.git
-          date=$(date -u -d '+8 hour' '+%Y.%m.%d_%H.%M.%S')
-
-      - name: 应用 Kernel 补丁
-        run: | 
-          cd android_kernel_xiaomi_sdm845_LineageOS
-          git submodule add https://github.com/tiann/KernelSU
-          ln -s ~/android_kernel_xiaomi_sdm845_LineageOS/KernelSU/kernel ~/android_kernel_xiaomi_sdm845_LineageOS/drivers
-          mv ~/android_kernel_xiaomi_sdm845_LineageOS/drivers/kernel ~/android_kernel_xiaomi_sdm845_LineageOS/drivers/kernelsu
-          cd android_kernel_xiaomi_sdm845_LineageOS/KernelSU
-          wget https://github.com/ookiineko/KernelSU/commit/0950fbba5e79820da539054f6eb6d1d48ec96ff4.patch
-          patch -p1 < 0950fbba5e79820da539054f6eb6d1d48ec96ff4.patch
-          wget https://github.com/tiann/KernelSU/commit/8fbdd996de69abd107f147218881ae1aa72ef565.patch
-          patch -p1 -R < 8fbdd996de69abd107f147218881ae1aa72ef565.patch
-          rm -rf *.patch  
-          
-      - name: 编译 Kernel
-        run: |
-          cd
-          cd android_kernel_xiaomi_sdm845_LineageOS
-          bash ./build_online.sh
-          
-      - name: 获取系统信息并保存到文件
-        run: |
-          echo "CPU 信息："
-          cat /proc/cpuinfo | grep 'model name' | uniq
-          cat /proc/cpuinfo | grep 'cpu MHz' | uniq
-          echo "内存信息："
-          free -m
-          echo "磁盘空间信息："
-          df -h
-          echo "操作系统信息："
-          lsb_release -a
-
-          # 将系统信息保存到 info.txt 文件中
-          echo "系统信息：" > INFO.txt
-          echo "CPU 信息：" >> INFO.txt
-          cat /proc/cpuinfo | grep 'model name' | uniq >> INFO.txt
-          cat /proc/cpuinfo | grep 'cpu MHz' | uniq >> INFO.txt
-          echo "内存信息：" >> INFO.txt
-          free -m >> INFO.txt
-          echo "磁盘空间信息：" >> INFO.txt
-          df -h >> INFO.txt
-          echo "操作系统信息：" >> INFO.txt
-          lsb_release -a >> INFO.txt
-        shell: bash
-        
       - name: 创建 INFO 文件
         run: |
           echo "内核编译设备: Xiaomi MIX 2S
@@ -83,13 +29,11 @@ jobs:
           编译耗时: $((total_time / 60)) 分钟 $((total_time % 60)) 秒
           Copyright © 2023 tosasitill 0202 & 0227 Made with love" >> INFO.txt
           
-          cd
-          
       - name: 上传 Kernel
         uses: ncipollo/release-action@v1.12.0
         with:
           artifacts: ~/tosasitillKernel-Ci-V${{ github.event.inputs.KERNEL_VER }}.zip
           name: "Xiaomi_MIX2S_KernelSU"
           tag: " ${{ github.run_number }}_Xiaomi_MIX2S_KernelSU"
-          bodyFile: "INFO.txt"
+          bodyFile: "~/android_kernel_xiaomi_sdm845_LineageOS/INFO.txt"
           token: ${{ secrets.GITHUB_TOKEN }}
