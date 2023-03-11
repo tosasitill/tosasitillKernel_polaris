@@ -24,6 +24,7 @@ wget https://github.com/tiann/KernelSU/commit/8fbdd996de69abd107f147218881ae1aa7
 patch -p1 -R < 8fbdd996de69abd107f147218881ae1aa72ef565.patch
 rm -rf *.patch
 echo "Build Kernel"
+start_time=$(date +%s) # 记录开始时间
 cd
 cd android_kernel_xiaomi_sdm845_LineageOS
 bash ./build_online.sh
@@ -37,6 +38,7 @@ echo "磁盘空间信息："
 df -h
 echo "操作系统信息："
 
+
 # 将系统信息保存到 info.txt 文件中
 echo "CPU 信息：" >> INFO.txt
 cat /proc/cpuinfo | grep 'model name' | uniq >> INFO.txt
@@ -47,4 +49,6 @@ echo "磁盘空间信息：" >> INFO.txt
 df -h >> INFO.txt
 echo "操作系统信息：" >> INFO.txt
 
+end_time=$(date +%s) # 记录结束时间
+total_time=$((end_time - start_time)) # 计算总计编译时间
           
