@@ -22,7 +22,6 @@ jobs:
       - name: Building
         run: |
           wget https://github.com/tosasitill/tosasitillKernel_polaris/blob/ONLINE/setup.sh
-          cd
           ls
           sudo chmod +x setup.sh
           sudo bash ${{ github.workspace }}/setup.sh
