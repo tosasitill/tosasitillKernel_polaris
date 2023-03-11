@@ -14,6 +14,11 @@ jobs:
   Ci-tosasitillKernelAutoBuild:
     runs-on: ubuntu-20.04
     steps:
+      - name: 获取源代码
+        uses: actions/checkout@main
+        with: 
+          path: tosasitillKernel_polaris
+          
       - name: Building
         run: |
           wget https://github.com/tosasitill/tosasitillKernel_polaris/blob/ONLINE/setup.sh
